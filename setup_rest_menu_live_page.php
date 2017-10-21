@@ -1,598 +1,717 @@
-<?php
-header('Content-Type: text/html; charset=utf-8');
+<?php error_reporting("E^NOTICE");
 include_once 'includes/session.php';
 include_once("config/accessConfig.php");
-$setupHead      = "active";
-$setupDropDown1 = "display: block;";
-$setupDropDown  = "display: block;";
-$setupResMenu14  = "active";
-$setupMenu3     = "active";
+
+$intLocationID=$_SESSION["loc"];
+$lh_id=$_REQUEST['lhid'];
+
+$sql = mysql_query("select delivery , togo , open_thu from locations where  id =".$_SESSION["loc"]);
+$value= mysql_fetch_array($sql);
+$delivery = $value['delivery'];
+$togo = $value['togo'];
+ if($_SESSION['togo'] == "")
+ {
+ 	$_SESSION['togo'] = "Yes";
+ }
+ if($_SESSION['delivery'] == "")
+ {
+ 	$_SESSION['delivery'] = "Yes";
+ }
 
 
-if(isset($_POST) && $_POST['action']=='delete' && $_REQUEST['menugrp_id']>0){
-	$del = "DELETE FROM location_menu_group WHERE id = '".$_REQUEST['menugrp_id']."'";
-	$res = mysql_query($del);
-	if($res){
-		echo 'yes';
-	}
-	exit();
-}
-
-$menu=$_REQUEST['menu'];
-$menu_id=$_REQUEST['menu_id'];
-
-$sql = "SELECT id, menu, image, description, TIME_FORMAT( starttime,'%k:%i') starttime , TIME_FORMAT( endtime,'%k:%i') endtime FROM location_menus where location_ID = " . $_SESSION['loc'] . " AND (`type` is null OR `type` = 'POS' ) ORDER BY menu ASC";
-$query = mysql_query($sql) or die(mysql_error());
-
-if(mysql_num_rows($query)!=0 && $menu=='')
+$restaurantDropDown = "display: block;";
+$restaurantHead = "active";
+$restaurantMenu9 = "active";
+function server_get($emp)
 {
-	$rowmenu=mysql_fetch_assoc($query);
-	$menu=$rowmenu['id'];
+	$sql =mysql_query("select CONCAT(first_name,' ',last_name) as name from employees where id =".$emp);
+	$value = mysql_fetch_array($sql);
+	return $value['name'];
+
 }
-$querysel = "SELECT * FROM location_menu_group WHERE location_id=" . $_SESSION['loc'] . " ORDER BY menu_group ASC";
-$resultgroup = mysql_query($querysel);
 
+$location_id = $_SESSION['loc'];
+$rd = $_SESSION["employee_id"];
+$sql = "SELECT DISTINCT(payment_type) FROM location_payments WHERE location_id = '$location_id'";
+$res = mysql_query($sql);
+//$rows = mysql_fetch_array($res);
+$sql12="select check_number,employee_id,order_status from client_orders where id=".$_REQUEST['id'];
 
+	$res12 = mysql_query($sql12);
+	while($val = mysql_fetch_array($res12))
+	{
+		$check_number = $val['check_number'];
+		$emp = $val['employee_id'];
+		$server = server_get($emp);
 
-$sqlpayroll = "SELECT currency_symbol FROM locations WHERE id=".$_SESSION["loc"];
-$resultpayroll = mysql_query($sqlpayroll);
-$rowperiod = mysql_fetch_assoc($resultpayroll);
-
-$currency = $rowperiod["currency_symbol"];
+	}
+$res_emp = mysql_fetch_array(mysql_query("select pos_update_other_server,Allow_discount,Allow_adjustment from employees where id=".$_SESSION['employee_id'].""));
+$update_other_server = $res_emp['pos_update_other_server'];
+$Allow_discount = $res_emp['Allow_discount'];
+$Allow_adjustment = $res_emp['Allow_adjustment'];
 ?>
+
+
 <!DOCTYPE html>
-<html>
-<head>
+<html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SoftPoint | BusinessPanel</title>
+<title><?php echo $_SESSION['SITE_TITLE']; ?></title>
+<link rel="stylesheet" href="themes/pickadate.01.default.css">
 <link rel="stylesheet" href="css/style.default.css" type="text/css" />
 <link rel="stylesheet" href="css/responsive-tables.css">
-<style>
-.line3 { background:#808080 !important; color:#FFFFFF !important ;}
-.progress { position:relative; width:100%; border: 1px solid #ddd; padding: 1px; border-radius: 3px;  display:none; margin-top:10px; }
-.bar { background-color: #B4F5B4; width:0%; height:20px; border-radius: 3px; }
-.percent { position:absolute; display:inline-block; top:3px; left:48%; }
-#dyntable2_filter input
-{
-    width: 70px
-}
-.paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
-padding: 5px 8px !important;
-}
-.dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active, .dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last{
- padding: 5px 8px !important;
-}
-.modal-footer {
-    -webkit-border-radius: 0 !important;
-    -moz-border-radius: 0 !important;
-     border-radius: 0 !important;
+<link rel="stylesheet" href="lib/themes/default.css" id="theme_base">
+<link rel="stylesheet" href="lib/themes/default.date.css" id="theme_date">
+<link rel="stylesheet" href="lib/themes/default.time.css" id="theme_time">
+<link rel="stylesheet" href="css/restaurant.css">
 
-}
-</style>
+<link rel="stylesheet" href="css/pos_point.css" type="text/css" />
+<link rel="stylesheet" href="css/tabcontent.css"  type="text/css"/>
+
+<script type="text/javascript">
+	var location_id = "<?=$_SESSION['loc']?>";
+	var created_by = "<?=$_SESSION['employee_id']?>";
+	var employee_id = created_by;
+	var table_id = "<?=$_GET['tableid']?>";
+	var pos_update_other_server1 = "<?=$_SESSION['pos_update_other_server']; ?>";
+	var global_podeoutroserver1 = true;
+	if(pos_update_other_server1=='no'){
+		global_podeoutroserver1 = false;
+	}
+</script>
+
 <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-migrate-1.1.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.9.2.min.js"></script>
-<script type="text/javascript" src="prettify/prettify.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="js/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="js/flot/jquery.flot.resize.min.js"></script>
 <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/jquery.form.js"></script>
+<script type="text/javascript" src="js/jquery.datetimepicker.js"></script>
+<!--<script type="text/javascript" src="js/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.tagsinput.min.js"></script>
+<script type="text/javascript" src="js/jquery.autogrow-textarea.js"></script>
+<script type="text/javascript" src="js/chosen.jquery.min.js"></script>
+-->
 <script type="text/javascript" src="js/jquery.jgrowl.js"></script>
 <script type="text/javascript" src="js/jquery.alerts.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
+
+
+<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="js/plugins/columnizer/jquery.columnizer.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js" ></script>
+
+<script type="text/javascript" src="../internalaccess/url.js"></script>
+
+<script type="text/javascript" src="<?=HTTPP;?>maps.google.com/maps/api/js?sensor=false"></script>
+<script  type="text/javascript" src="js/token.js"></script>
+<script src="js/order.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/modernizr.min.js"></script>
 <script type="text/javascript" src="js/responsive-tables.js"></script>
 <script type="text/javascript" src="js/custom.js"></script>
-<script type="text/javascript" src="js/datetime-picker.min.js"></script>
+<script src="js/dragscrollable.js"></script>
+<script src="js/scrollsync.js"></script>
+<script src="js/seat.js"></script>
+<script src="js/client.js"></script>
+<script src="js/payments.js"></script>
+<script src="js/functions2.js"></script>
+<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/excanvas.min.js"></script><![endif]-->
 <script type="text/javascript" src="js/elements.js"></script>
+<script type="text/javascript" src="prettify/prettify.js"></script>
+<script type="text/javascript" src="js/ui.spinner.min.js"></script>
+<script type="text/javascript" src="js/webcam/webcam.js"></script>
+<script type="text/javascript" src="mtjmsr.js"></script>
+<script type="text/javascript" src="js/simpleautocomplete/js/simpleAutoComplete.js"></script>
+<script type="text/javascript">
+jQuery(".loading-image").show();
+	setTimeout(function()
+	{
+		jQuery(".loading-image").hide();
+	},6500);
+	var myVar;
+	var emp_login_id = <?php echo $rd;?> ;
+	var update_other_server = '<?php echo $update_other_server;?>';
+	//alert(update_other_server);
+	GLOBAL_url=API;
+	var $ = jQuery;
+	var defsize=4;
+	var pay=3;
+	var Allow_discount= '<?php echo $Allow_discount;?>';
+	var Allow_adjustment = '<?php echo $Allow_adjustment;?>';
 
-<script type="text/javascript" src="js/tablednd.js"></script>
-<script type="text/javascript" src="js/jquery.form.js"></script>
+
+</script>
+<script type="text/javascript" src="js/validation.js"></script>
+
+<script src="js/attendance.js"></script>
+
+<script src="js/togles.js"></script>
+<script src="js/menuandorder.js"></script>
+<script src="api/api-functions.js"></script>
+<script src="lib/picker.js"></script>
+<script src="lib/picker.date.js"></script>
+<script src="lib/picker.time.js"></script>
+<script src="lib/legacy.js"></script>
+<script src="js/main_pos.js"></script>
+<script src="source/pickadate.js"></script>
+
+<script src="js/tabcontent.js" type="text/javascript"/></script>
 
 <style>
-    .s_panel{
-        border-bottom: 1px solid lightgray;
-    }
+.orngridmenu li img{
+	height:111px;
+	width:112px;
+}
+.searchbtn { width:8% !important; height:28px; padding:0px; float:left; background:url(./images/icons/search.png) center center no-repeat;  left:0;  cursor:pointer; border:none;}
+.removebtm { width:5%; height:10%;  background:url(./images/searchbtn.png) center center no-repeat; position:absolute;  top:9px;  border:none; background-size:20px 20px;}
+.searchboxinner { width:100% !important; height:28px; float:left; background:#fff;border-color:#ccc;border-style:solid;border-width:1px;}
+.all_button{
+	margin-top:5px;
+	width:67px;
+	padding:6px 0px;
+}
+.contgroup{
+	border:2px solid #376193;
+	margin-bottom:0.5%;
+}
+@media screen and (max-width: 1024px) {
+	.all_button{
+	margin-top:5px;
+	width:55px;
+	padding:10px 5px;
+}
+}
+.clientdetail{ line-height:18px;}
+.addclient-greybar{border-bottom:1px solid #DDDDDD; width:100% !important;}
+.clientname { color:#0866C6; float:left; font-weight:bold;	}
+.clientadr{ color:#000000; float:left;}
+.clientaction{ margin-top:22px;}
+#mymodal_htmladd, #mymodal_html333{ padding:0px 15px;}
+.clientaction{padding-top:0% !important; float:left;}
+.ui-tabs-panel{ padding:15px 15px 0;}
 </style>
-<script type="text/javascript">
-    function clearForm(){
-		jQuery('#ResetButton').show();
-        jQuery("#menuform")[0].reset();
-		clearField();
-		jQuery('.line3').removeClass('line3');
-    }
+
+<!--for popo point-->
+
+<script src="js/lightbox-form.js" type="text/javascript"></script>
+
+<!--end pos point-->
 
 
+<script>
 
-	function SubmitItemBFLeaving(returnUrl){
-		jQuery("#hidItemIds").val(jQuery("#hidItemIds").val().slice(0,-2));
-		jQuery.ajax({
-				type: "POST",
-				url: "ajax_add_menu_article_drop.php",
-				data: {itemid:0, menugroupid: jQuery("#hidMenuGroupID").val(),menu:jQuery("#hidMenu").val(),itemIds:jQuery("#hidItemIds").val()},
-				success: function (data) {
+function resizeDiv() {
+			vpw = jQuery(window).width();
+			vph = jQuery(window).height();
+			vph = vph - 280; //340
 
-						jQuery("#btn_submit").addClass("btn-active");
-						jAlert('Items are added to menu group successfully!', 'Alert', function (r){
-							if(r){
-								window.location.href = returnUrl;
-							}
-						});
-					}
+			vresdiv =jQuery(window).height();
+			vresdiv = vresdiv - 331; // 420
 
-			   });
+			jQuery(".tabbedwidget").css({"height": vph + "px"});
+			jQuery("#e-7,#e-8,#e-9").css({"height": vresdiv + "px"});
+			//jQuery("#general,#description").css({"overflow-y": "scroll"});
+			var desheight = jQuery("#d-7").height();
+				if(desheight > vresdiv){
+					jQuery("#e-7").css({"overflow-y": "scroll"});
+				}
+				else{
+					jQuery("#e-7").css({"overflow-y": "hidden"});
+				}
+
+			var desheight1 = jQuery("#d-8").height();
+			console.log(desheight1+'==>'+vph);
+				if(desheight1 > vresdiv){
+					console.log('yes');
+					jQuery("#e-8").css({"overflow-y": "scroll"});
+				}
+				else{
+					jQuery("#e-8").css({"overflow-y": "hidden"});
+				}
+			var desheight2 = jQuery("#d-9").height();
+			console.log(desheight2+'==>'+vph);
+				if(desheight2 > vresdiv){
+					console.log('yes');
+					jQuery("#e-9").css({"overflow-y": "scroll"});
+				}
+				else{
+					jQuery("#e-9").css({"overflow-y": "hidden"});
+				}
+
+				setTimeout(function(){
+					resizeDiv();
+				},5000);
+
+			}
+
+		function resizeDiv2() {
+			vpw = jQuery(window).width();
+			vph = jQuery(window).height();
+			var btn_hei = jQuery("#buttonsmid").height();
+			vph = vph - 326; //340
+			vph = eval(vph) - eval(btn_hei);
+
+			vresdiv =jQuery(window).height();
+
+			vresdiv = vresdiv - 390; //350
+
+
+			jQuery("#resdiv").css({"height": vph + "px"});
+			jQuery(".widgetcontent").css({"height": vresdiv + "px"});
+			//jQuery("#resdiv").css({"overflow-y": "scroll"});
+			jQuery(".widgetcontent").css({"border": "0"});
+
+			var desheight = jQuery("#pop_wrap").height();
+				if(desheight > vph){
+					jQuery("#resdiv").css({"overflow-y": "scroll"});
+				}
+				else{
+					jQuery("#resdiv").css({"overflow-y": "auto"});
+				}
+
+		}
+		window.onresize = function(event) {
+			resizeDiv();
+			resizeDiv2();
+		}
+jQuery(document).ready(function() {
+
+				setTimeout(function(){
+					resizeDiv();
+					resizeDiv2();
+				},1000);
+	});
+
+    var vtotalzao=0;
+	var str_location_current_time = 0;
+	var delivery="N";
+	function getrestofapi(){
+		var d = new Date();
+
+		return "&created_on=BusinessPanel&token="+generatetoken()+"&tmok="+d.getTime();
+
 	}
 
-    jQuery(document).ready(function(){
+	function transformurl(url){
 
-        jQuery(".menuitems").on("click",function(){
-            jQuery(".line3").removeClass("line3");
-            jQuery(this).addClass("line3");
-        })
+	  return 	url+getrestofapi();
+	}
 
-        <?php if ($_GET["insert"]=="yes"){?>
-                jAlert("Item was updated successfully!");
-        <?php }
+	 function check_add(){
+	 	jQuery("#added_item").show();
+		jQuery("#order_item").hide();
+	 }
+	 function check_ord(){
+	 	jQuery("#order_item").show();
+		jQuery("#added_item").hide();
+	 }
+	function replace_dropdown_value (dropdown, textfield)
+	{
 
-
-		?>
-
-
-		jQuery("#btn_submit").click(function(){
-
-			if(jQuery(this).hasClass("btn-active")){
-			}else{
-				jQuery("#hidItemIds").val(jQuery("#hidItemIds").val().slice(0,-2));
-				jQuery.alerts.okButton = 'OK';
-				jQuery.alerts.cancelButton = 'Cancel';
-				jConfirm("Would you like to apply the changes now?", "Confirm Dialog", function(r){
-					if(r){
-						if(jQuery("#hidItemIds").val()==''){
-							jQuery("#btn_submit").addClass("btn-active");
-							jAlert('Items are added to menu group successfully!', 'Alert', function () {
-								window.location.href = "setup_rest_menu_live_page.php?menu="+ jQuery("#hidMenu").val()+"&menu_id="+jQuery("#hidMenuGroupID").val();
-							});
-							return false;
-						}
-						jQuery.ajax({
-							type: "POST",
-							url: "ajax_add_menu_article_drop.php",
-							//data: {itemid:ui.helper.data("id"), menugroupid: menugroupid,menu:menu},
-							//data: {itemid: , itemIds:itemid, menugroupid: menugroupid,menu:menu},
-
-							data: {itemid:0, menugroupid: jQuery("#hidMenuGroupID").val(),menu:jQuery("#hidMenu").val(),itemIds:jQuery("#hidItemIds").val()},
-							success: function (data) {
-
-								if (data==1){
-									jQuery("#btn_submit").addClass("btn-active");
-									jAlert('Items are added to menu group successfully!', 'Alert', function () {
-										window.location.href = "setup_rest_menu_live_page.php?menu="+ jQuery("#hidMenu").val()+"&menu_id="+jQuery("#hidMenuGroupID").val();
-									});
-								}else if (data==0){
-									jAlert('Item already exists in selected group!', 'Alert', function () {
-
-									});
-								}
-							}
-
-						   }); // end jQuery.ajax
-					}else{
-						return false;
-					}
-				});
-
-
-				}
-		});
-
-        jQuery(".droppable").droppable({
-                over: function(event, ui) {
-                    jQuery(this).css("background","gray");
-                    jQuery(this).find(".accordion-toggle").trigger("click");
-                 },
-
-				drop: function (event, ui) {
-
-
-                   var $this = jQuery(this);
-                   var menugroupid = $this.data("id");
-                   var menu = $this.data("menu");
-
-				   var itemIds = "";
-				   jQuery(".menuitems_checkBox").each(function(){
-				   		if(this.checked){
-							if(itemIds.toString().indexOf(jQuery(this).attr('rel'))==-1){
-								itemIds = itemIds + jQuery(this).attr('rel')+',';
-							}
-						}
-				   });
-				   if(itemIds!=''){
-				   		if(itemIds.toString().indexOf(ui.helper.data("id"))==-1){
-				   			itemIds = itemIds + ui.helper.data("id");
-						}else{
-							itemIds = itemIds.slice(0,-1);
-						}
-				   }
-
-
-				   console.log("Menu Group: " + menugroupid);
-				   console.log("Menu: " + menu);
-				   console.log("Item Ids: " + itemIds);
-
-
-				   /*var itemid = [];
-				   var menugroupid = [];
-				   var menu = [];
-					*/
-					/*
-					var itemid = '';
-				   //var menugroupid = '';
-				   //var menu = '';
-				   jQuery.each(jQuery('.menuitems_checkBox'), function(i, v){
-				   		if(jQuery(v).attr('checked')){
-							itemid += jQuery(v).attr('rel') +',';
-							//menugroupid += jQuery(v).data('id') +',';
-							//menu += jQuery(v).data('menu') +',';
-						}
-				   });
-
-				   if(itemid == ''){
-				   		itemid = ui.helper.data("id");
-						console.log('itemid ui::' +itemid);
-				   }
-
-				   console.log('itemid:' + itemid);
-				   console.log('menugroupid:' + menugroupid);
-				   */
-				   jConfirm("Are you sure you want to add these items to the menu group?","Confirm Dialog",function(r){
-                   if (ui.helper.hasClass("menuitem")){
-
-				   		var t = jQuery('#menu_table_'+menugroupid).DataTable();
-						var strPrio = jQuery("#priority_"+menu).val();
-
-						if(itemIds!=''){
-							var itemIdss  = itemIds.split(',');
-							jQuery.each(itemIdss,function(index,value){
-								if(value!=ui.helper.data("id")){
-									var obj = jQuery("#dyntable2 #"+value+" .menuitem");
-									console.log(obj);
-									var editbuttons = '<a data-toggle="modal" data-target="#edit_item_modal" href="ajax-edit-menu-item.php?itemid='+obj.data("id")+'&menu='+ menu +'&group='+ menugroupid +'" style="background:none;!important;  line-height: 10px !important;margin-top: 5px !important;    padding: 1px !important; "><span class="a"><img src="images/edit.png"></span></a>';
-									editbuttons = editbuttons + '&nbsp;<span class="deletemenu1" data-menugroupid="'+menugroupid+'" data-id="'+ obj.data("id") +'" style="cursor:pointer!important;"><img src="images/Delete.png"></span>';
-
-									t.row.add( [
-										''+ strPrio +'',
-										''+ obj.data("itemname") + '',
-										''+ obj.data("plu") + '',
-										''+ obj.data("drink") + '',
-										''+ obj.data("fire") + '',
-										''+ obj.data("taxable") + '',
-										''+ obj.data("printer") + '',
-										''+ obj.data("price") + 'test1',
-										'' + editbuttons + ''
-									] ).draw( false );
-									strPrio++;
-									jQuery("#dyntable2 #"+value+" .menuitems_checkBox").trigger('click');
-									jQuery("#hidItemIds").val(obj.data("id")+'|'+ menugroupid + "," + jQuery("#hidItemIds").val());
-								}
-							});
-						}
-
-
-						var editbuttons = '<a data-toggle="modal" data-target="#edit_item_modal" href="ajax-edit-menu-item.php?itemid='+ui.helper.data("id")+'&menu='+ menu +'&group='+ menugroupid +'" style="background:none;!important;  line-height: 10px !important;margin-top: 5px !important;    padding: 1px !important; "><span class="a"><img src="images/edit.png"></span></a>';
-                            editbuttons = editbuttons + '&nbsp;<span class="deletemenu1" data-menugroupid="'+menugroupid+'" data-id="'+ ui.helper.data("id") +'" style="cursor:pointer!important;"><img src="images/Delete.png"></span>';
-
-						t.row.add( [
-							''+ strPrio +'',
-							''+ ui.helper.data("itemname") + '',
-							''+ ui.helper.data("plu") + '',
-							''+ ui.helper.data("drink") + '',
-							''+ ui.helper.data("fire") + '',
-							''+ ui.helper.data("taxable") + '',
-							''+ ui.helper.data("printer") + '',
-							''+ ui.helper.data("price") + '',
-							'' + editbuttons + ''
-						] ).draw( false );
-						jQuery("#menu_table_"+menugroupid+" tr").each(function(){
-							jQuery(this).find('td:nth-child(8)').css('text-align','right');
-							//jQuery(this + ' td:nth-child(2)').css('color','red');
-						});
-						strPrio++;
-
-				   		jQuery("#hidItemIds").val(ui.helper.data("id")+'|'+ menugroupid + "," + jQuery("#hidItemIds").val());
-						jQuery("#hidMenuGroupID").val(menugroupid);
-						jQuery("#hidMenu").val(menu);
-						jQuery("#btn_submit").removeClass("btn-active");
-						jQuery("#btn_submit").addClass("btn-success");
-						jQuery("#priority_"+menu).val(eval(jQuery("#priority_"+menu).val())+1);
-						 jQuery("#dyntable2 #"+ui.helper.data("id")+" .menuitems_checkBox").trigger('click');
-						 console.log("Item ID:" + ui.helper.data("id"));
-
-						  console.log("hidItemIds ID:" + jQuery("#hidItemIds").val().slice(0,-2));
-						  jQuery("#priority_"+menu).val(strPrio);
-				   	jQuery(".draggable").draggable({
-                            tolerance: 'fit',
-                            helper: "clone"
-                        });
-				   t.destroy();
-				   }
-				});
-
-
-
-                }
-
-
-            }
-
-
-
-        );
-            jQuery(".draggable").draggable({
-                tolerance: 'fit',
-                helper: "clone"
-            }
-
-        );
-        // dynamic table
-        jQuery('#dyntable').dataTable({
-            "sPaginationType": "full_numbers",
-         //   "aaSortingFixed": [[0,'asc']],
-            "fnDrawCallback": function(oSettings) {
-                jQuery.uniform.update();
-            }
-        });
-        jQuery('#dyntable2').dataTable({
-            "sPaginationType": "full_numbers",
-            "info":     false,
-            "bPaginate": false,
-            "sScrollY": "500px",
-            "bFilter": false, "bInfo": false,
-         //   "aaSortingFixed": [[0,'asc']],
-            "fnDrawCallback": function(oSettings) {
-                jQuery.uniform.update();
-            }
-        });
-        jQuery("#dyntable2_length").css("display","none");
-    jQuery("#dyntable2_filter input").css("width","110px");
-    jQuery("#dyntable2_filter input").css("margin-bottom","5px");
-
-          jQuery('#ccstarttime').timepicker();
-        jQuery('#ccendtime').timepicker();
-
-	jQuery("#menuselect" ).change(function() {
-		window.location="<?=$_SERVER['PHP_SELF']?>?menu="+jQuery(this).val();
-	});
-
-
-
-
-	 jQuery('#edit_modifier_modal').on('hidden', function(e){
-			jQuery(this).removeData('modal');
-			jQuery('.modal-body', this).empty();
-		});
-
-         jQuery('#edit_item_modal').on('hidden', function(e){
-			jQuery(this).removeData('modal');
-			jQuery('.modal-body', this).empty();
-		});
-
-
-    });
-
-
-function validacMenu() {
-
-        if (document.forms.menuform.item_group.value == "") {
-         	jAlert('Please Select a Menu Group!', 'Alert Dialog', function(){
-            });
-
-        } else if (document.forms.menuform.ccitem.value == "") {
-           jAlert('please insert Menu Item!', 'Alert Dialog', function(){
-            });
-        } else if (document.forms.menuform.item_priority.value == "") {
-            jAlert('please insert Item Priority!', 'Alert Dialog', function(){
-            });
-			jQuery('#item_priority').removeAttr("disabled");
-        }else if (document.forms.menuform.ccplu.value == "") {
-           jAlert('This item requires a PLU!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccplu').removeAttr("disabled");
-        } else if (document.forms.menuform.ccpriority.value == "") {
-          jAlert('Please insert Article Priority!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccpriority').removeAttr("disabled");
-        } else if (document.forms.menuform.ccprice.value == "") {
-          	jAlert('Please insert Article Price!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccprice').removeAttr("disabled");
-        } else if (document.forms.menuform.cctaxable.value == "") {
-           jAlert('Please select Taxable!', 'Alert Dialog', function(){
-            });
-			jQuery('#cctaxable').removeAttr("disabled");
-        } /*else if (document.forms.menuform.ccmax_quantity.value == "") {
-           jAlert('Please insert Maximum Quantity!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccmax_quantity').removeAttr("disabled");
-        } else if (document.forms.menuform.cctogo.value == "") {
-           jAlert('Please select Togo!', 'Alert Dialog', function(){
-            });
-			jQuery('#cctogo').removeAttr("disabled");
-        } else if (document.forms.menuform.ccdelivery.value == "") {
-          	jAlert('Please select Delivery!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccdelivery').removeAttr("disabled");
-        } else if (document.forms.menuform.ccrequire_temperature.value == "") {
-           jAlert('Please select Require Temperature!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccrequire_temperature').removeAttr("disabled");
-        } else if (document.forms.menuform.ccdrink.value == "") {
-           jAlert('Please select Drink!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccdrink').removeAttr("disabled");
-        } else if (document.forms.menuform.ccglass.value == "") {
-          jAlert('Please select Glass!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccglass').removeAttr("disabled");
-		} else if (document.forms.menuform.ccglass.value == "yes" && document.forms.menuform.ccglass_price.value == " ") {
-          jAlert('Please insert Glass Price!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccglass_price').removeAttr("disabled");
-		} else if (document.forms.menuform.ccglass.value == "yes" && document.forms.menuform.ccglass_price2.value == " ") {
-          jAlert('Please insert 2nd Glass Price!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccglass_price2').removeAttr("disabled");
-        } else if (document.forms.menuform.ccdivide.value == "") {
-           jAlert('Please select Divide!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccdivide').removeAttr("disabled");
-        } else if (document.forms.menuform.ccmax_divide.value == "" && document.forms.menuform.ccdivide.value == "yes") {
-            jAlert('Please insert Max Divide!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccmax_divide').removeAttr("disabled");
-        } else if (document.forms.menuform.ccfire_order.value == "") {
-           jAlert('Please select Fire Order!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccfire_order').removeAttr("disabled");
-        } else if (document.forms.menuform.ccsides.value == "") {
-           jAlert('Please select Sides!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccsides').removeAttr("disabled");
-        }  else if (document.forms.menuform.ccrefills.value == "") {
-            jAlert('Please select Refills!', 'Alert Dialog', function(){
-            });
-			jQuery('#ccrefills').removeAttr("disabled");
-        } */
-        else if(jQuery("#promotion_type").val()=="Fixed Amount" && jQuery("#promotion_amount").val()=="" && jQuery("#promotion").val()=="Yes"){
-            jAlert('Please enter promotion amount!', 'Alert Dialog', function(){
-            });
-        } else if(jQuery("#promotion_type").val()=="Percentage" && jQuery("#promotion_percentage").val()=="" && jQuery("#promotion").val()=="Yes"){
-            jAlert('Please enter promotion percentage!', 'Alert Dialog', function(){
-            });
-        } else if(jQuery("#promotion_type").val()=="Percentage" && jQuery("#percentage_round").val()=="" && jQuery("#promotion").val()=="Yes"){
-            jAlert('Please enter promotion percentage round!', 'Alert Dialog', function(){
-            });
-        } else if(jQuery("#promotion_type").val()=="Percentage" && jQuery("#percentage_round_to").val()=="" && jQuery("#promotion").val()=="Yes"){
-            jAlert('Please enter promotion percentage round to!', 'Alert Dialog', function(){
-            });
-        } else if(jQuery("#promotion").val()=="Yes" && jQuery("#promotion_req_qty").val()==''){
-            //jAlert('Promotion Required Quantity has to be greater than zero!', 'Alert Dialog', function(){
-			jAlert('Please enter promotion required quantity!', 'Alert Dialog', function(){
-            });
-		} else if(jQuery("#promotion").val()=="Yes" && jQuery("#promotion_req_qty").val()==0){
-            jAlert('Promotion Required Quantity has to be greater than zero!', 'Alert Dialog', function(){
-            });
-        }else if(jQuery("#promotion").val()=="Yes" && jQuery("#promotion_continued").val()==""){
-            jAlert('Please select promotion continued!', 'Alert Dialog', function(){
-            });
-        }else if(jQuery("#promotion_continued").val()=="Yes" && (jQuery("#promotion_dow").val()=="" || jQuery("#promotion_dow").val()==null)){
-            jAlert('Please select promotion days of week!', 'Alert Dialog', function(){
-            });
-        } else {
-
-            jQuery('Input,select,Textarea').removeAttr("disabled");
-
-			jQuery.ajax({
-				url:'insertmenuarticle_rest.php',
-				type:'POST',
-				data:jQuery("#menuform").serialize(),
-				success:function(data){
-					var menu_id = jQuery("#menuform #menu_id").val();
-					jQuery("#delete_items_"+menu_id).html(data);
-					jQuery("#menuform")[0].reset();
-					jQuery("#edit_item_modal").modal("hide");
-					jAlert("Item Updated Successfully!","Alert Dialog");
-					return false;
-
-				}
-			});
-
-			//return true;
-         }
-        return false;
-    }
-
-    function SearchItems(){
-        jQuery.ajax({
-                    type: "POST",
-                    url: "ajax-menu-article-search.php",
-                    data: { menu:'<?php echo $menu;?>', articletype: jQuery("#articletype").val(), desc:jQuery("#search_n").val() },
-                    async: false,
-                    success: function(data){
-
-                        jQuery("#dyntable2").html(data);
-                        jQuery(".draggable").draggable({
-                            tolerance: 'fit',
-                            helper: "clone"
-                        });
-                    }
-             })
-    }
-
-	/*window.onhashchange = function() {
-		jAlert("Back Button Pressed");
-		return false;
-	}*/
-	jQuery('.leftmenu a').live('click',function(e){
-		var ths = jQuery(this);
-		var href = jQuery(ths).attr('href');
-		if(href!='' && href!='javascript:void(0)' && href!='#'){
-			if(jQuery("#btn_submit").hasClass("btn-active")){
-
-			}else{
-				e.preventDefault();
-				jQuery.alerts.okButton = 'Yes';
-				jQuery.alerts.cancelButton = 'No';
-				jConfirm("Would you like to apply the changes before leaving the page?","Confirm Dialog",function(r){
-					if(r){
-						var href = jQuery(ths).attr('href');
-						SubmitItemBFLeaving(href);
-					}else{
-						jQuery("#btn_submit").addClass("btn-active")
-						var href = jQuery(ths).attr('href');
-						window.location.href = href;
-					}
-				});
-			}
+		validaforneworder();
+		//alert(textfield);
+		//return false;
+		//document.getElementById(textfield).value='';
+		//if (document.getElementById(dropdown).value != ''){
+		if(document.getElementById(dropdown).selectedIndex >= 0){
+			var st = jQuery("#"+dropdown).find('option:selected').text();
+			jQuery("#"+textfield).val(st);
 		}
-	});
-	jQuery('.header a').live('click',function(e){
-		var ths = jQuery(this);
-		var href = jQuery(ths).attr('href');
-		if(href!='' && href!='javascript:void(0)' && href!='#'){
-			if(jQuery("#btn_submit").hasClass("btn-active")){
+		/*if(document.getElementById(dropdown).selectedIndex >= 0){
+		  document.getElementById(textfield).value=document.getElementById(dropdown).options[document.getElementById(dropdown).selectedIndex].text;
+		}*/
+	}
 
-			}else{
-				e.preventDefault();
-				jQuery.alerts.okButton = 'Yes';
-				jQuery.alerts.cancelButton = 'No';
-				jConfirm("Would you like to apply the changes before leaving the page?","Confirm Dialog",function(r){
-					if(r){
-						var href = jQuery(ths).attr('href');
-						SubmitItemBFLeaving(href);
-					}else{
-						jQuery("#btn_submit").addClass("btn-active")
-						var href = jQuery(ths).attr('href');
-						window.location.href = href;
-					}
-				});
-			}
-		}
-	});
-
-	/*jQuery(window).bind("beforeunload",function(event) {
-		if(jQuery("#btn_submit").hasClass("btn-active")){
-
-		}else{
-			return "You have some unsaved changes";
-		}
-	});*/
 </script>
 
 
+<script type="text/javascript">
+
+  var vtotalzao=0;
+  jQuery(function() {
+    jQuery( "ul.droptrue" ).sortable({
+      connectWith: "ul"
+    });
+
+    jQuery( "ul.dropfalse" ).sortable({
+      connectWith: "ul",
+      dropOnEmpty: false
+    });
+
+    jQuery( "#sortable1, #sortable2, #sortable3" ).disableSelection();
+
+
+     jQuery("#sortable1, #sortable2, #sortable3" ).mouseover(function() {
+         conrfire();
+		       });
+  });
+  </script>
+<script type="text/javascript">
+	var tab_index=0;
+	var isiPadnow = navigator.userAgent.match(/iPad/i) != null;
+	function tabSettings(tabno)
+	{
+		tab_index=tabno;
+	}
+
+	var  global_p_time=timenow();
+	setTimeout(function()
+	{
+		diftm(global_p_time);
+	},3000);
+	var  global_p_time="";
+
+	function diftm()
+	{
+			var a = global_p_time ;
+		  	var re='';
+		    if (a == ""){
+		  		re='';
+		    }else {
+
+				var b=timenow();
+				var aa1=a.split(":");
+				var aa2=b.split(":");
+				var aukjix=aa2;
+				aa2=aukjix[0];
+				var cntss=0;
+				var palaux='';
+				var plreal=aa2;
+				var sg=0;
+
+
+				for (var sg2=0;sg2<aa2.length;sg2++){
+					if (aa2[sg2] == ' '){
+
+							palaux='';
+
+					}else{
+					  palaux=palaux+aa2[sg2];
+					}
+				}
+
+				plreal=palaux;
+
+				aa2=plreal;
+				var sfjhklm = new Array();
+				    sfjhklm[0]=aa2;
+					sfjhklm[1]=aukjix[1];
+					sfjhklm[2]=aukjix[2];
+					aa2=sfjhklm;
+					if (aa2[2].indexOf('pm')>0){
+						aa2[0]=parseFloat(aa2[0])+12;
+				        var skjm=aa2[2];
+						skjm=skjm.split(' ');
+						aa2[2]=skjm;
+					}else if (aa2[2].indexOf('am')>0){
+						var skjm=aa2[2];
+						skjm=skjm.split(' ');
+						aa2[2]=skjm;
+					}
+
+				var d1=new Date(parseInt("2001",10),(parseInt("01",10))-1,parseInt("01",10),parseInt(aa1[0],10),parseInt(aa1[1],10),parseInt(aa1[2],10));
+				var d2=new Date(parseInt("2001",10),(parseInt("01",10))-1,parseInt("01",10),parseInt(aa2[0],10),parseInt(aa2[1],10),parseInt(aa2[2],10));
+
+
+				var con = get_time_difference(d1,d2);
+				re=con.duration;
+  			}
+		    var v_start = $("#ck_starttime").html();
+		    var v_eend = $("#ck_endtime").html();
+
+		    if (v_eend != ""){
+				re = diftam(v_eend,v_start);
+		    }
+
+	  	$("#ck_elapsedtime").html(re);
+			setTimeout(function(){
+	  			diftm();
+			},1000);
+  	}
+
+  	$(window).resize(function () {
+		wHeight = $(window).height();
+		wwidth = $(window).width();
+		bx = wHeight - 120;
+			bx = 600;
+		if(wHeight == 411 && wwidth == 1109)
+		{
+			jQuery('.itemstblerow_col5').css('width','12%');
+			jQuery('.itemstblerow_col2').css('width','65%');
+		}
+		else
+		{
+			jQuery('.itemstblerow_col5').css('width','8%');
+			jQuery('.itemstblerow_col2').css('width','69%');
+		}
+	});
+
+	// jQuery("#divmainwrapper").append("<div id='opaque' style='display: none;'></div>");
+	// jQuery("#payment_tab").click(function () {
+
+	// });
+
+	jQuery("#btnClose1").click(function(){
+		jQuery("#client_modal_interface").hide();
+		jQuery("#opaque").hide();
+	});
+
+	jQuery("#client_name").blur(function(){
+		jQuery('#searchfldaddclient').val(jQuery('#client_name').val());
+		loadclient();
+		jQuery('#imgClient').click();
+	});
+
+	jQuery("#client_phone").blur(function(){
+		jQuery('#searchfldaddclient').val(jQuery('#client_phone').val());
+		loadclient();
+		jQuery('#imgClient').click();
+	});
+
+	jQuery('#txtAddressCountry_autocomplete').typeahead({
+		source: function (query, process) {
+			return jQuery.ajax({
+				url: 'ajax_get_country_with_id.php',
+				type: 'post',
+				data: { query: query,  autoCompleteClassName:'autocomplete',
+				selectedClassName:'sel',
+				attrCallBack:'rel',
+				identifier:'estado'},
+				dataType: 'json',
+				success: function (result) {
+					var resultList = result.map(function (item) {
+						var aItem = { id: item.id, name: item.label };
+						return JSON.stringify(aItem);
+					});
+					return process(resultList);
+				}
+			});
+		},
+
+		matcher: function (obj) {
+			var item = JSON.parse(obj);
+			return ~item.name.toLowerCase().indexOf(this.query.toLowerCase())
+		},
+
+		sorter: function (items) {
+		   var beginswith = [], caseSensitive = [], caseInsensitive = [], item;
+			while (aItem = items.shift()) {
+				var item = JSON.parse(aItem);
+				if (!item.name.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(JSON.stringify(item));
+				else if (~item.name.indexOf(this.query)) caseSensitive.push(JSON.stringify(item));
+				else caseInsensitive.push(JSON.stringify(item));
+			}
+
+			return beginswith.concat(caseSensitive, caseInsensitive)
+
+		},
+
+		highlighter: function (obj) {
+			var item = JSON.parse(obj);
+			var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+			var locvalue=item.name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+				return '<strong>' + match + '</strong>'
+			})
+			return locvalue;
+		},
+
+		updater: function (obj) {
+			var item = JSON.parse(obj);
+			var location = jQuery('#ddAddressCountry').attr('value', item.id);
+			jQuery('#txtAddressCountry_autocomplete').attr('value', item.name);
+			GetStateList(item.id);
+			return item.name;
+		}
+	});
+
+	jQuery("#slider4").slider({
+		range: "min",
+		value: 48,
+		min: 1,
+		max: 100,
+		slide: function( event, ui ) {
+			jQuery("#amount4").text(ui.value);
+		}
+	});
+
+	jQuery("#amount4").text(jQuery("#slider4").slider("value"));
+
+	var $tabs = jQuery('.tabbedwidget').tabs({
+        activate: function (event, ui) {
+			selected = ui.newTab.context.id;
+           	tabSettings(selected);
+        }
+    });
+
+	var selected = $tabs.tabs('option', 'active');
+	tabSettings(selected);
+
+	<?php if($_REQUEST['id'] != "" ) {?>
+		jQuery("#item_open").addClass("ui-state-default ui-corner-top ui-tabs-selected ui-state-active");
+	<?php } ?>
+
+    jQuery('#global_tbl,#global_tbl2,#global_tbl3').dataTable({
+        "sPaginationType": "full_numbers",
+        "aaSorting": [[ 2, "asc" ]],
+        "bJQuery": true,
+        "fnDrawCallback": function(oSettings) {
+            // jQuery.uniform.update();
+        }
+    });
+
+	jQuery("#readybtnid").click(function(){
+		jQuery("#cover,#table,#server,#server1").hide();
+		jQuery(".del_info,#rt").hide();
+		jQuery("#readybtnid").css("opacity",1);
+		jQuery("#deliverybtnid").css("opacity",0.5);
+		jQuery("#parcelbtnid").css("opacity",0.5);
+		jQuery("#tblbtnid").css("opacity",0.5);
+	});
+
+	jQuery("#deliverybtnid").click(function(){
+		jQuery("#table,#server,#server1").hide();
+		jQuery("#cover,#rt,.del_info").show();
+		jQuery("#deliverybtnid").css("opacity",1);
+		jQuery("#tblbtnid").css("opacity",0.5);
+		jQuery("#parcelbtnid").css("opacity",0.5);
+		jQuery("#readybtnid").css("opacity",0.5);
+	});
+
+	jQuery("#parcelbtnid").click(function(){
+		jQuery("#table,#server,.del_info,#server1").hide();
+		jQuery("#cover,#rt").show();
+		jQuery("#parcelbtnid").css("opacity",1);
+		jQuery("#tblbtnid").css("opacity",0.5);
+		jQuery("#deliverybtnid").css("opacity",0.5);
+		jQuery("#readybtnid").css("opacity",0.5);
+	});
+
+	jQuery("#tblbtnid").click(function(){
+		jQuery(".del_info,#rt").hide();
+		jQuery("#cover,#table,#server,#server1").show();
+		jQuery("#tblbtnid").css("opacity",1);
+		jQuery("#parcelbtnid").css("opacity",0.5);
+		jQuery("#deliverybtnid").css("opacity",0.5);
+		jQuery("#readybtnid").css("opacity",0.5);
+	});
+
+	jQuery("#sale_detail_btn").click(function(){
+		jQuery("#sale_detail").show();
+	});
+
+	jQuery("#divmainwrapper").append("<div id='opaque' style='display: none;'></div>");
+	jQuery('#seat_modal').css({top:'50%',left:'50%',margin:'-'+(jQuery('#seat_modal').height() / 2)+'px 0 0 -'+(jQuery('#seat_modal').width() / 2)+'px',position:'fixed'});
+	jQuery('#menu_modal_1').css({top:'50%',left:'50%',margin:'-'+(jQuery('#menu_modal_1').height() / 1)+'px 0 0 -'+(jQuery('#menu_modal_1').width() / 2)+'px',position:'fixed'});
+	jQuery('#menu_modal').css({top:'50%',left:'50%',margin:'-'+(jQuery('#menu_modal').height() / 2)+'px 0 0 -'+(jQuery('#menu_modal').width() / 2)+'px',position:'fixed'});
+	jQuery('#fire_modal').css({top:'50%',left:'50%',margin:'-'+(jQuery('#fire_modal').height() / 2)+'px 0 0 -'+(jQuery('#fire_modal').width() / 2)+'px',position:'fixed'});
+	jQuery('#box15').css({top:'50%',left:'50%',margin:'-'+(jQuery('#box15').height() / 2)+'px 0 0 -'+(jQuery('#box15').width() / 2)+'px',position:'fixed'});
+	jQuery('#client_modal_interface').css({top:'50%',left:'50%',margin:'-'+(jQuery('#client_modal_interface').height() / 2)+'px 0 0 -'+(jQuery('#client_modal_interface').width() / 2)+'px',position:'fixed'});
+	jQuery('#boxweight').css({top:'50%',left:'50%',margin:'-'+(jQuery('#boxweight').height() / 2)+'px 0 0 -'+(jQuery('#boxweight').width() / 2)+'px',position:'fixed'});
+	jQuery('#manager_password').css({top:'50%',left:'50%',margin:'-'+(jQuery('#manager_password').height() / 2)+'px 0 0 -'+(jQuery('#manager_password').width() / 2)+'px',position:'fixed'});
+	jQuery('#opendrawer').css({top:'50%',left:'50%',margin:'-'+(jQuery('#opendrawer').height() / 2)+'px 0 0 -'+(jQuery('#opendrawer').width() / 2)+'px',position:'fixed'});
+	jQuery('#filter_modal').css({top:'50%',left:'50%',margin:'-'+(jQuery('#filter_modal').height() / 2)+'px 0 0 -'+(jQuery('#filter_modal').width() / 2)+'px',position:'fixed'});
+
+	jQuery("#allergic_t").click(function(){
+		jQuery("#allergic_t").css({"background-color":"#DD0000","border-color":"#DD0000"});
+	});
+	jQuery("#side_t").click(function(){
+		jQuery("#side_t").css({"background-color":"#0866C6","border-color":"#0866C6"});
+	});
+	jQuery("#only_t").click(function(){
+		jQuery("#only_t").css({"background-color":"#0866C6","border-color":"#0866C6"});
+	});
+	jQuery("#less_t").click(function(){
+		jQuery("#less_t").css({"background-color":"#0866C6","border-color":"#0866C6"});
+	});
+	jQuery("#extra_t").click(function(){
+		jQuery("#extra_t").css({"background-color":"#0866C6","border-color":"#0866C6"});
+	});
+	jQuery("#select_t").click(function(){
+		jQuery("#select_t").css({"background-color":"#0866C6","border-color":"#0866C6"});
+	});
+	jQuery("#remove_t").click(function(){
+		jQuery("#remove_t").css({"background-color":"#0866C6","border-color":"#0866C6"});
+	});
+
+	jQuery("#allergic_b").click(function(){
+		jQuery("#allergic_b").css({"background-color":"#DD0000","border-color":"#DD0000"});
+		jQuery("#side_b,#only_b,#less_b,#extra_b,#select_b,#remove_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+	jQuery("#side_b").click(function(){
+		jQuery("#side_b").css({"background-color":"#0866C6","border-color":"#0866C6"});
+		jQuery("#allergic_b,#only_b,#less_b,#extra_b,#select_b,#remove_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+	jQuery("#only_b").click(function(){
+		jQuery("#only_b").css({"background-color":"#0866C6","border-color":"#0866C6"});
+		jQuery("#side_b,#allergic_b,#less_b,#extra_b,#select_b,#remove_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+	jQuery("#less_b").click(function(){
+		jQuery("#less_b").css({"background-color":"#0866C6","border-color":"#0866C6"});
+		jQuery("#side_b,#only_b,#allergic_b,#extra_b,#select_b,#remove_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+	jQuery("#extra_b").click(function(){
+		jQuery("#extra_b").css({"background-color":"#0866C6","border-color":"#0866C6"});
+		jQuery("#side_b,#only_b,#less_b,#allergic_b,#select_b,#remove_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+	jQuery("#select_b").click(function(){
+		jQuery("#select_b").css({"background-color":"#0866C6","border-color":"#0866C6"});
+		jQuery("#side_b,#only_b,#less_b,#extra_b,#allergic_b,#remove_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+	jQuery("#remove_b").click(function(){
+		jQuery("#remove_b").css({"background-color":"#0866C6","border-color":"#0866C6"});
+		jQuery("#side_b,#only_b,#less_b,#extra_b,#select_b,#allergic_b").css({"background-color":"#777777","border-color":"#777777"});
+	});
+
+	jQuery("#seat1").click(function(){
+		jQuery("#seat_img1").css("opacity",1);
+		return false;
+	});
+	jQuery("#seat2").click(function(){
+		jQuery("#seat_img2").css("opacity",1);
+		return false;
+	});
+	jQuery("#seat3").click(function(){
+		jQuery("#seat_img3").css("opacity",1);
+		return false;
+	});
+	jQuery("#seat4").click(function(){
+		jQuery("#seat_img4").css("opacity",1);
+		return false;
+	});
+	jQuery("#seat5").click(function(){
+		jQuery("#seat_img5").css("opacity",1);
+		return false;
+	});
+	jQuery("#seat6").click(function(){
+		jQuery("#seat_img6").css("opacity",1);
+		return false;
+	});
+
+	jQuery('#item-hide').click(function () {
+		jQuery("#item_open").addClass("ui-state-default ui-corner-top");
+	});
+
+	jQuery("#Cancelled").click(function(){
+		jQuery('#searchfldaddclient').val('');
+		jQuery('#searchfldaddclient').blur();
+	});
+
+	jQuery("#Search_client").click(function(){
+		//loadclient();
+	});
+
+	jQuery(".filterbtn15").click(function(){
+		jQuery("#filter_modal").modal('show');
+	});
+//});
+
+</script>
+<link rel="stylesheet" href="prettify/prettify.css" type="text/css" />
 
 </head>
-
-<body >
+<body onLoad="fixspaces();">
 
 <div class="mainwrapper">
 
