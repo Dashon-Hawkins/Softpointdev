@@ -1,0 +1,185 @@
+2017-10-21 01:51:56 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:51:56 8377 1 Trace: CFtpLogonOpData::Send() in state 0
+2017-10-21 01:51:56 8377 1 Status: Resolving address of ftp.softpointdev.com
+2017-10-21 01:51:56 8377 1 Status: Connecting to 104.130.29.11:21...
+2017-10-21 01:51:56 8377 1 Status: Connection established, waiting for welcome message...
+2017-10-21 01:51:57 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:51:57 8377 1 Response: 220-FileZilla Server 0.9.56 beta
+2017-10-21 01:51:57 8377 1 Response: 220-written by Tim Kosse (tim.kosse@filezilla-project.org)
+2017-10-21 01:51:57 8377 1 Response: 220 Please visit https://filezilla-project.org/
+2017-10-21 01:51:57 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 1
+2017-10-21 01:51:57 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:51:57 8377 1 Trace: CFtpLogonOpData::Send() in state 2
+2017-10-21 01:51:57 8377 1 Command: AUTH TLS
+2017-10-21 01:51:57 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:51:57 8377 1 Response: 234 Using authentication type TLS
+2017-10-21 01:51:57 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 2
+2017-10-21 01:51:57 8377 1 Status: Initializing TLS...
+2017-10-21 01:51:57 8377 1 Trace: CTlsSocketImpl::Handshake()
+2017-10-21 01:51:57 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:51:57 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:51:57 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:51:57 8377 1 Trace: TLS Handshake successful
+2017-10-21 01:51:57 8377 1 Trace: Protocol: TLS1.2, Key exchange: ECDHE-RSA, Cipher: AES-256-GCM, MAC: AEAD
+2017-10-21 01:51:57 8377 1 Status: Verifying certificate...
+2017-10-21 01:52:19 8377 1 Status: TLS connection established.
+2017-10-21 01:52:19 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:19 8377 1 Trace: CFtpLogonOpData::Send() in state 5
+2017-10-21 01:52:19 8377 1 Command: USER internal_dj
+2017-10-21 01:52:19 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:19 8377 1 Response: 331 Password required for internal_dj
+2017-10-21 01:52:19 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 5
+2017-10-21 01:52:19 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:19 8377 1 Trace: CFtpLogonOpData::Send() in state 5
+2017-10-21 01:52:19 8377 1 Command: PASS ************
+2017-10-21 01:52:19 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:19 8377 1 Response: 530 Login or password incorrect!
+2017-10-21 01:52:19 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 5
+2017-10-21 01:52:19 8377 1 Trace: CFtpControlSocket::ResetOperation(1094)
+2017-10-21 01:52:19 8377 1 Trace: CControlSocket::ResetOperation(1094)
+2017-10-21 01:52:19 8377 1 Error: Critical error: Could not connect to server
+2017-10-21 01:52:44 8377 1 Status: Disconnected from server
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 0
+2017-10-21 01:52:44 8377 1 Status: Resolving address of ftp.softpointdev.com
+2017-10-21 01:52:44 8377 1 Status: Connecting to 104.130.29.11:21...
+2017-10-21 01:52:44 8377 1 Status: Connection established, waiting for welcome message...
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 220-FileZilla Server 0.9.56 beta
+2017-10-21 01:52:44 8377 1 Response: 220-written by Tim Kosse (tim.kosse@filezilla-project.org)
+2017-10-21 01:52:44 8377 1 Response: 220 Please visit https://filezilla-project.org/
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 1
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 2
+2017-10-21 01:52:44 8377 1 Command: AUTH TLS
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 234 Using authentication type TLS
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 2
+2017-10-21 01:52:44 8377 1 Status: Initializing TLS...
+2017-10-21 01:52:44 8377 1 Trace: CTlsSocketImpl::Handshake()
+2017-10-21 01:52:44 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:52:44 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:52:44 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:52:44 8377 1 Trace: TLS Handshake successful
+2017-10-21 01:52:44 8377 1 Trace: Protocol: TLS1.2, Key exchange: ECDHE-RSA, Cipher: AES-256-GCM, MAC: AEAD
+2017-10-21 01:52:44 8377 1 Status: Verifying certificate...
+2017-10-21 01:52:44 8377 1 Status: TLS connection established.
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 5
+2017-10-21 01:52:44 8377 1 Command: USER internal_dj
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 331 Password required for internal_dj
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 5
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 5
+2017-10-21 01:52:44 8377 1 Command: PASS ***********
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 230 Logged on
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 5
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 6
+2017-10-21 01:52:44 8377 1 Command: SYST
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 215 UNIX emulated by FileZilla
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 6
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 7
+2017-10-21 01:52:44 8377 1 Command: FEAT
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 211-Features:
+2017-10-21 01:52:44 8377 1 Response:  MDTM
+2017-10-21 01:52:44 8377 1 Response:  REST STREAM
+2017-10-21 01:52:44 8377 1 Response:  SIZE
+2017-10-21 01:52:44 8377 1 Response:  MLST type*;size*;modify*;
+2017-10-21 01:52:44 8377 1 Response:  MLSD
+2017-10-21 01:52:44 8377 1 Response:  AUTH SSL
+2017-10-21 01:52:44 8377 1 Response:  AUTH TLS
+2017-10-21 01:52:44 8377 1 Response:  PROT
+2017-10-21 01:52:44 8377 1 Response:  PBSZ
+2017-10-21 01:52:44 8377 1 Response:  UTF8
+2017-10-21 01:52:44 8377 1 Response:  CLNT
+2017-10-21 01:52:44 8377 1 Response:  MFMT
+2017-10-21 01:52:44 8377 1 Response:  EPSV
+2017-10-21 01:52:44 8377 1 Response:  EPRT
+2017-10-21 01:52:44 8377 1 Response: 211 End
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 7
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 10
+2017-10-21 01:52:44 8377 1 Command: PBSZ 0
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 200 PBSZ=0
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 10
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::Send() in state 11
+2017-10-21 01:52:44 8377 1 Command: PROT P
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:44 8377 1 Response: 200 Protection level set to P
+2017-10-21 01:52:44 8377 1 Trace: CFtpLogonOpData::ParseResponse() in state 11
+2017-10-21 01:52:44 8377 1 Status: Logged in
+2017-10-21 01:52:44 8377 1 Trace: Measured latency of 73 ms
+2017-10-21 01:52:44 8377 1 Trace: CFtpControlSocket::ResetOperation(0)
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::ResetOperation(0)
+2017-10-21 01:52:44 8377 1 Status: Retrieving directory listing...
+2017-10-21 01:52:44 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:44 8377 1 Trace: CFtpListOpData::ListSend() in state 0
+2017-10-21 01:52:44 8377 1 Trace: CFtpChangeDirOpData::Send() in state 0
+2017-10-21 01:52:44 8377 1 Trace: CFtpChangeDirOpData::Send() in state 1
+2017-10-21 01:52:44 8377 1 Command: PWD
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:45 8377 1 Response: 257 "/" is current directory.
+2017-10-21 01:52:45 8377 1 Trace: CFtpChangeDirOpData::ParseResponse() in state 1
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::ResetOperation(0)
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::ResetOperation(0)
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::ParseSubcommandResult(0)
+2017-10-21 01:52:45 8377 1 Trace: CFtpListOpData::SubcommandResult() in state 1
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:45 8377 1 Trace: CFtpListOpData::ListSend() in state 2
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::Send() in state 1
+2017-10-21 01:52:45 8377 1 Command: TYPE I
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:45 8377 1 Response: 200 Type set to I
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::ParseResponse() in state 1
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::Send() in state 2
+2017-10-21 01:52:45 8377 1 Command: PASV
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:45 8377 1 Response: 227 Entering Passive Mode (104,130,29,11,197,152)
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::ParseResponse() in state 2
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::Send() in state 4
+2017-10-21 01:52:45 8377 1 Trace: Binding data connection source IP to control connection source IP 192.168.1.138
+2017-10-21 01:52:45 8377 1 Command: MLSD
+2017-10-21 01:52:45 8377 1 Trace: CTransferSocket::OnConnect
+2017-10-21 01:52:45 8377 1 Trace: CTlsSocketImpl::Handshake()
+2017-10-21 01:52:45 8377 1 Trace: Trying to resume existing TLS session.
+2017-10-21 01:52:45 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:45 8377 1 Response: 150 Opening data channel for directory listing of "/"
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::ParseResponse() in state 4
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::Send() in state 5
+2017-10-21 01:52:45 8377 1 Trace: CTlsSocketImpl::ContinueHandshake()
+2017-10-21 01:52:45 8377 1 Trace: TLS Handshake successful
+2017-10-21 01:52:45 8377 1 Trace: TLS Session resumed
+2017-10-21 01:52:45 8377 1 Trace: Protocol: TLS1.2, Key exchange: ECDHE-RSA, Cipher: AES-256-GCM, MAC: AEAD
+2017-10-21 01:52:45 8377 1 Trace: CTransferSocket::OnConnect
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:52:45 8377 1 Response: 226 Successfully transferred "/"
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::ParseResponse() in state 5
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::SendNextCommand()
+2017-10-21 01:52:45 8377 1 Trace: CFtpRawTransferOpData::Send() in state 8
+2017-10-21 01:52:45 8377 1 Trace: CTransferSocket::TransferEnd(1)
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::TransferEnd()
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::ResetOperation(0)
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::ResetOperation(0)
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::ParseSubcommandResult(0)
+2017-10-21 01:52:45 8377 1 Trace: CFtpListOpData::SubcommandResult() in state 3
+2017-10-21 01:52:45 8377 1 Trace: CFtpControlSocket::ResetOperation(0)
+2017-10-21 01:52:45 8377 1 Trace: CControlSocket::ResetOperation(0)
+2017-10-21 01:52:45 8377 1 Status: Directory listing of "/" successful
+2017-10-21 01:54:45 8377 1 Trace: CFtpControlSocket::OnReceive()
+2017-10-21 01:54:45 8377 1 Response: 421 Connection timed out.
+2017-10-21 01:54:45 8377 1 Trace: Unexpected reply, no reply was pending.
+2017-10-21 01:54:45 8377 1 Status: Connection closed by server
+2017-10-21 01:54:45 8377 1 Trace: CFtpControlSocket::ResetOperation(66)
+2017-10-21 01:54:45 8377 1 Trace: CControlSocket::ResetOperation(66)
