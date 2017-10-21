@@ -283,3 +283,44 @@
 2017-10-21 05:21:26 268 3 Status: Disconnected from server
 2017-10-21 05:22:13 268 1 Response: 421 Connection timed out.
 2017-10-21 05:22:13 268 1 Status: Connection closed by server
+2017-10-21 05:54:52 268 3 Status: Resolving address of ftp.softpointdev.com
+2017-10-21 05:54:52 268 3 Status: Connecting to 104.130.29.11:21...
+2017-10-21 05:54:52 268 3 Status: Connection established, waiting for welcome message...
+2017-10-21 05:54:52 268 3 Response: 220-FileZilla Server 0.9.56 beta
+2017-10-21 05:54:52 268 3 Response: 220-written by Tim Kosse (tim.kosse@filezilla-project.org)
+2017-10-21 05:54:52 268 3 Response: 220 Please visit https://filezilla-project.org/
+2017-10-21 05:54:52 268 3 Command: AUTH TLS
+2017-10-21 05:54:52 268 3 Response: 234 Using authentication type TLS
+2017-10-21 05:54:52 268 3 Status: Initializing TLS...
+2017-10-21 05:54:52 268 3 Status: Verifying certificate...
+2017-10-21 05:54:52 268 3 Status: TLS connection established.
+2017-10-21 05:54:52 268 3 Command: USER internal_dj
+2017-10-21 05:54:52 268 3 Response: 331 Password required for internal_dj
+2017-10-21 05:54:52 268 3 Command: PASS ***********
+2017-10-21 05:54:52 268 3 Response: 230 Logged on
+2017-10-21 05:54:52 268 3 Command: PBSZ 0
+2017-10-21 05:54:52 268 3 Response: 200 PBSZ=0
+2017-10-21 05:54:52 268 3 Command: PROT P
+2017-10-21 05:54:52 268 3 Response: 200 Protection level set to P
+2017-10-21 05:54:52 268 3 Status: Logged in
+2017-10-21 05:54:52 268 3 Status: Starting upload of /Users/dashonhawkins/SoftPointInternship/businessPanel/AngryCrab/restaurant/menu/setup_rest_menu_live_page.php
+2017-10-21 05:54:52 268 3 Command: CWD /
+2017-10-21 05:54:52 268 3 Response: 250 CWD successful. "/" is current directory.
+2017-10-21 05:54:55 268 3 Command: TYPE A
+2017-10-21 05:54:55 268 3 Response: 200 Type set to A
+2017-10-21 05:54:55 268 3 Command: PASV
+2017-10-21 05:54:55 268 3 Response: 227 Entering Passive Mode (104,130,29,11,197,217)
+2017-10-21 05:54:55 268 3 Command: STOR setup_rest_menu_live_page.php
+2017-10-21 05:54:55 268 3 Response: 150 Opening data channel for file upload to server of "/setup_rest_menu_live_page.php"
+2017-10-21 05:54:56 268 3 Response: 226 Successfully transferred "/setup_rest_menu_live_page.php"
+2017-10-21 05:54:56 268 3 Status: File transfer successful, transferred 236,825 bytes in 1 second
+2017-10-21 05:54:56 268 3 Status: Retrieving directory listing of "/"...
+2017-10-21 05:54:56 268 3 Command: TYPE I
+2017-10-21 05:54:56 268 3 Response: 200 Type set to I
+2017-10-21 05:54:56 268 3 Command: PASV
+2017-10-21 05:54:56 268 3 Response: 227 Entering Passive Mode (104,130,29,11,199,117)
+2017-10-21 05:54:56 268 3 Command: MLSD
+2017-10-21 05:54:56 268 3 Response: 150 Opening data channel for directory listing of "/"
+2017-10-21 05:54:56 268 3 Response: 226 Successfully transferred "/"
+2017-10-21 05:54:57 268 3 Status: Directory listing of "/" successful
+2017-10-21 05:55:56 268 3 Status: Disconnected from server
