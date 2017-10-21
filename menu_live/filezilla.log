@@ -280,3 +280,6 @@
 2017-10-21 05:20:26 268 3 Response: 150 Opening data channel for directory listing of "/"
 2017-10-21 05:20:26 268 3 Response: 226 Successfully transferred "/"
 2017-10-21 05:20:26 268 3 Status: Directory listing of "/" successful
+2017-10-21 05:21:26 268 3 Status: Disconnected from server
+2017-10-21 05:22:13 268 1 Response: 421 Connection timed out.
+2017-10-21 05:22:13 268 1 Status: Connection closed by server

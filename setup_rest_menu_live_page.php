@@ -786,28 +786,21 @@ if(mysql_num_rows($query)!=0)
             <div class="maincontentinner">
 							<div class="row-fluid">
 								<div class="span8" id="left_mailDiv">
-								                <div class="tabbedwidget tab-primary ui-tabs ui-widget ui-widget-content ui-corner-all" id="main_div" style="height: 744px;"> <!--height:500px;overflow:scroll;-->
-								                    <ul style="height:38px; float:left; width:100%;" class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-
-
-								                        <li id="item_open" style="" class="ui-state-default ui-corner-top" onclick="resizeDiv()">
-
-																				</li>
-
-								                        <li id="item-tab" onclick="resizeDiv()" class="ui-state-default ui-corner-top ui-state-disabled" style="display: none;">
-								                        	 <a href="#e-8" style=" vertical-align:top; text-align:center;" onclick="lastpagao='wrapper11';fodaoss=false;openpage('wrapper23');" id="open_order_first" class="">
-								                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-								                                <tbody><tr><td class="tborng-cntr" style="vertical-align:middle;">Items</td></tr>
-								                            </tbody></table>
-								                            </a>
-								                        </li>
-<!-- 								                  		<li id="item-hide" style="" onclick="resizeDiv()" class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
-								                            <a href="#e-8" id="open_order" style=" vertical-align:top; text-align:center;" onclick="openpage('wrapper23');">
-								                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-								                                <tbody><tr><td class="tborng-cntr" style="vertical-align:middle;">Items</td></tr>
-								                            </tbody></table>
-								                            </a>
-								                        </li>
+									<div class="tabbedwidget tab-primary" id="main_div" > <!--height:500px;overflow:scroll;-->
+											<ul style="height:38px; float:left; width:100%;">
+													<li id="item_close" class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active" onClick="resizeDiv()">
+															<a href="#e-7" id="first_tb" style=" vertical-align:top; text-align:center;" onClick="openpage('wrapper11');">
+															<table width="100%" border="0" cellspacing="0" cellpadding="0">
+																	<tr><td class="tborng-lft" style="vertical-align:middle;" >Items</td></tr>
+															</table>
+															</a>                        </li>
+													<li id="item_open" style="display:none;" class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active" onClick="resizeDiv()">
+															<a href="#e-7" id="item_second"  style=" vertical-align:top; text-align:center;">
+															<table width="100%" border="0" cellspacing="0" cellpadding="0">
+																	<tr><td class="tborng-lft" style="vertical-align:middle;" onClick="ocxop=1;loaditja();ocxop=1;openpageconfitrue('wrapper11');ocxop=1;">Items</td></tr>
+															</table>
+															</a>
+													 </li>
 								                        <li id="item-closetab" style="display:none;" onclick="resizeDiv()" class="ui-state-default ui-corner-top ui-state-disabled">
 								                            <a href="#" id="open_order" style=" vertical-align:top; text-align:center;" onclick="sendpaymen=false;openpage('wrapper23');">
 								                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -1240,6 +1233,7 @@ if(mysql_num_rows($query)!=0)
 								       </div>
 								           <!--</div> end messagepanel-->
 								          </div>
+
 
                 <br /><br />
 
